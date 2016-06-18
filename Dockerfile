@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.3
 
 ENV JAVA_VERSION_MAJOR=8  \
     JAVA_VERSION_MINOR=92 \
