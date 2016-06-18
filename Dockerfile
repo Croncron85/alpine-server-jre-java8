@@ -7,8 +7,10 @@ ENV JAVA_VERSION_MAJOR=8  \
     JAVA_HOME=/jre \
     PATH=${PATH}:/jre/bin \
     LANG=C.UTF-8
-    
-RUN apk add --no-cache --update --virtual=build-dependencies curl ca-certificates && \
+
+# about nsswitch.conf - see https://registry.hub.docker.com/u/frolvlad/alpine-oraclejdk8/dockerfile/
+
+RUN apk add --update curl ca-certificates && \
     cd /tmp && \
     curl -o glibc-2.21-r2.apk \
         "https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-2.21-r2.apk" && \
@@ -22,7 +24,7 @@ RUN apk add --no-cache --update --virtual=build-dependencies curl ca-certificate
     curl -jksSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
         "http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz" \
         | gunzip -c - | tar -xf - && \
-    apk del build-dependencies && \
+    apk del curl ca-certificates && \
     mv jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR}/jre /jre && \
     rm /jre/bin/jjs && \
     rm /jre/bin/keytool && \
@@ -39,5 +41,5 @@ RUN apk add --no-cache --update --virtual=build-dependencies curl ca-certificate
     rm -rf /jre/lib/jfr && \
     rm -rf /jre/lib/oblique-fonts && \
     rm -rf /tmp/* /var/cache/apk/*
-  
+
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/urandom"]
